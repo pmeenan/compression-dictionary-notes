@@ -22,7 +22,7 @@ If you set the test page as the origin for a site on a given CDN, you can visit 
 These are the settings needed to make compression dictionary transport work (if possible) for the CDNs that have been tested to date as well as the date when the testing was done. Feel free to submit a Pull Request with CDN-specific notes for any that have not been tested yet or to update notes for an existing test.
 
 ## Amazon CloudFront :white_check_mark:
-CloudFront supports passing custom content-encoding through the CDN and caching the artifacts. It doesn't work ing combination with "automatic compression" so all of the compression will need to be done by the origin.
+CloudFront supports passing custom content-encoding through the CDN and caching the artifacts. It doesn't work in combination with "automatic compression" so all of the compression will need to be done by the origin.
 
 To enable support, you need to create a custom [cache policy](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html#cache-key-create-cache-policy).
 
