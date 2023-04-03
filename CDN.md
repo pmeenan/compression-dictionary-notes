@@ -27,9 +27,11 @@ CloudFront supports passing custom content-encoding through the CDN and caching 
 To enable support, you need to create a custom [cache policy](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html#cache-key-create-cache-policy).
 
 The policy needs to have the `Accept-Encoding` and `Sec-Available-Dictionary` headers added as cache keys:
+
 ![CloudFront cache keys](images/cloudfront-headers.png)
 
 The policy also requires that the automatic compression settings be disabled:
+
 ![Cloudfront compression settings](images/cloudfront-compression.png)
 
 ### S3-backed distribution
