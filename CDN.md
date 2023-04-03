@@ -21,7 +21,7 @@ If you set the test page as the origin for a site on a given CDN, you can visit 
 # CDN-Specific Notes
 These are the settings needed to make compression dictionary transport work (if possible) for the CDNs that have been tested to date as well as the date when the testing was done. Feel free to submit a Pull Request with CDN-specific notes for any that have not been tested yet or to update notes for an existing test.
 
-|CDN|Status|As-of Date|
+|CDN|Status|As of Date|
 | --- | ------ | ----- |
 | [Amazon CloudFront](#amazon-cloudfront) | :white_check_mark: | April 3, 2023 |
 | [Cloudflare](#cloudflare) |  :x: | March 31, 2023 |
