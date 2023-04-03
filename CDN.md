@@ -57,4 +57,4 @@ if (req.http.Fastly-Orig-Accept-Encoding ~ "sbr") {
 }
 ```
 
-Once that is done, the content-encoding negotiation works perfectly and the cache supports `Vary` with the necessary headers, correctly serving 
+Once that is done, the content-encoding negotiation works perfectly and the cache supports `Vary` with the necessary headers, correctly serving the appropriate responses from cache.
