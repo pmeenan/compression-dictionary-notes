@@ -21,6 +21,20 @@ If you set the test page as the origin for a site on a given CDN, you can visit 
 ## CDN-Specific Notes
 These are the settings needed to make compression dictionary transport work (if possible) for the CDNs that have been tested to date as well as the date when the testing was done. Feel free to submit a Pull Request with CDN-specific notes for any that have not been tested yet or to update notes for an existing test.
 
+### Amazon CloudFront :white_check_mark:
+CloudFront supports passing custom content-encoding through the CDN and caching the artifacts. It doesn't work ing combination with "automatic compression" so all of the compression will need to be done by the origin.
+
+To enable support, you need to create a custom [cache policy](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html#cache-key-create-cache-policy).
+
+The policy needs to have the `Accept-Encoding` and `Sec-Available-Dictionary` headers added as cache keys:
+![CloudFront cache keys](images/cloudfront-headers.png)
+
+The policy also requires that the automatic compression settings be disabled:
+![Cloudfront compression settings](images/cloudfront-compression.png)
+
+#### S3-backed distribution
+For distributions that are backed by resources stored in a S3 bucket, a [CloudFront function](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-functions.html) is needed for both the request and response to select appropriate assets from the bucket based on the compression and `Sec-Available-Key`. i.e. append `.sbr.<hash>` to the end of the file name and add the `Content-Encoding: sbr` response header.  It can also be done with a lambda as the origin instead of the S3 bucket with all of the selection and fallback logic in the lambda. Assuming the resources can be cached, the lambda should execute very rarely.
+
 ### Cloudflare :x:
 Cloudflare [only supports gzip content-encoding](https://developers.cloudflare.com/support/speed/optimization-file-size/what-will-cloudflare-compress/#does-cloudflare-compress-resources) between the CDN and origin and will not pass arbitrary content-encodings through. Attempting to respond with an unsupported content-encoding results in an error.
 
