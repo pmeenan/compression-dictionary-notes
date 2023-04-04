@@ -24,7 +24,7 @@ These are the settings needed to make compression dictionary transport work (if 
 |CDN|Status|As of Date|
 | --- | ------ | ----- |
 | [Amazon CloudFront](#amazon-cloudfront) | :white_check_mark: | April 3, 2023 |
-| [Cloudflare](#cloudflare) |  :x: | March 31, 2023 |
+| [Cloudflare](#cloudflare) |  :white_check_mark: | April 4, 2023 |
 | [Fastly](#fastly) |  :white_check_mark: | March 29, 2023 |
 
 ## Amazon CloudFront
@@ -44,9 +44,39 @@ The policy also requires that the automatic compression settings be disabled:
 For distributions that are backed by resources stored in a S3 bucket, a [CloudFront function](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-functions.html) is needed for both the request and response to select appropriate assets from the bucket based on the compression and `Sec-Available-Key`. i.e. append `.sbr.<hash>` to the end of the file name and add the `Content-Encoding: sbr` response header.  It can also be done with a lambda as the origin instead of the S3 bucket with all of the selection and fallback logic in the lambda. Assuming the resources can be cached, the lambda should execute very rarely.
 
 ## Cloudflare
-Cloudflare [only supports gzip content-encoding](https://developers.cloudflare.com/support/speed/optimization-file-size/what-will-cloudflare-compress/#does-cloudflare-compress-resources) between the CDN and origin and will not pass arbitrary content-encodings through. Attempting to respond with an unsupported content-encoding results in an error.
+Cloudflare [only supports gzip content-encoding](https://developers.cloudflare.com/support/speed/optimization-file-size/what-will-cloudflare-compress/#does-cloudflare-compress-resources) between the CDN and origin and will not pass arbitrary content-encodings through by default and it will not pass the client's Accept-Encoding header through.
 
-The cache can support arbitrary headers as cache keys through page rules and specifying a [custom cache key](https://developers.cloudflare.com/cache/how-to/create-cache-keys/) (requires an enterprise plan).
+This can be worked around using a worker, passing the client's Accept-Encoding header in a different header and forcing the cache keys to vary on the headers explicitly.  It is also important that the origin specify `no-transform` on the `Cache-Control:` response header when using `Content-Encoding: sbr`.
+
+```javascript
+export default {
+  async fetch(request) {
+    // Rewrite the host to point to the origin (if necessary)
+    const url = new URL(request.url);
+    url.hostname = 'test.sharedbrotli.com';
+
+    // Special handling when the client advertises an available dictionary
+    if (request.headers.has('Sec-Available-Dictionary')) {
+      let init = {
+        method: request.method,
+        redirect: "manual",
+        headers: new Headers(request.headers),
+        cf: {
+          cacheKey: request.headers.get('Sec-Available-Dictionary') + url.toString(),
+          cacheTtl: 2592000
+        }
+      };
+      try {
+        init.headers.set('X-Accept-Encoding', request.cf.clientAcceptEncoding);
+      } catch(e) {}
+      return fetch(url.toString(), init);
+    }
+
+    // By default, pass the request through unmodified
+    return fetch(url.toString(), request);
+  }
+};
+```
 
 ## Fastly
 By default, Fastly will [normalize the Accept-Encoding header](https://developer.fastly.com/reference/http/http-headers/Accept-Encoding/#normalization) before passing it to the origin. This can be fixed with a bit of VCL to pass the `sbr` encoding through:
