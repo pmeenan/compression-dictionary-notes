@@ -6,7 +6,7 @@ To successfully deploy compression dictionary transport (as it currently stands)
 
 1. Pass the `Use-As-Dictionary:` response header and `Sec-Available-Dictionary:` request header through between the client and the origin.
 1. Pass `Accept-Encoding: sbr,...` and `Content-Encoding: sbr` through between the client and origin even if it can't decode the contents.
-1. Support varying the cache of resources for both request headers (i.e. `Vary: Content-Encoding,Sec-Available-Dictionary`) so that sbr-encoded responses are cached by the dictionary that was used and are not intermixed with the full resource.
+1. Support varying the cache of resources for both request headers (i.e. `Vary: Accept-Encoding,Sec-Available-Dictionary`) so that sbr-encoded responses are cached by the dictionary that was used and are not intermixed with the full resource.
 
 The first item, passing the new headers, is usually not a problem bot the last two tend to require special handling (or updated support) by middle-boxes, including CDN's.
 
