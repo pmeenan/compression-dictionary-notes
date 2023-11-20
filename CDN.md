@@ -14,7 +14,7 @@ The first item, passing the new headers, is usually not a problem bot the last t
 Compressing content with external dictionaries will not work with edge-compute that needs to modify the payload of the response unless the compression is done after the edge compute runs. Practically, that means most edge-compute systems can route sbr-encoded responses but not modify the streams until support is added to the CDN for doing the actual compression. For these notes, we're specifically assuming compression is being done at the origin and passing through the CDN.
 
 ## Testing Support
-There is a test page at (https://test.sharedbrotli.com/)[https://test.sharedbrotli.com/] ([code here](https://github.com/pmeenan/shared-brotli-test)) that can be used to test delivering sbr-encoded resources through a CDN. It will simulate requests from a browser that supports compression dictionary transport to the origin server which has implemented support for delivering sbr-encoded versions of a script file.
+There is a test page at [https://test.sharedbrotli.com/](https://test.sharedbrotli.com/) ([code here](https://github.com/pmeenan/shared-brotli-test)) that can be used to test delivering sbr-encoded resources through a CDN. It will simulate requests from a browser that supports compression dictionary transport to the origin server which has implemented support for delivering sbr-encoded versions of a script file.
 
 If you set the test page as the origin for a site on a given CDN, you can visit that site in a browser and test what parts of the flow work and iterate on making changes until it works (if it is possible for the given CDN).
 
