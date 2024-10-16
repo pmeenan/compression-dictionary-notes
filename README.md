@@ -3,3 +3,4 @@ Various notes on the implementation and deployment of [compression dictionary tr
 
 Specific Notes:
 * [CDN integration notes](CDN.md)
+* [Creating dcb and dcz files](cli.md)
